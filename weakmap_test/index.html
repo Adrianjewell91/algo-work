@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <button id="btn-1" type="button" name="button">1</button>
+    <button id="btn-2" type="button" name="button">2</button>
+    <button id="btn-3" type="button" name="button">3</button>
+    </div>
+
+    <script type="text/javascript">
+      var arr = ['Prize 1', 'Prize 2 ', 'prize 3 YAYAYAYAY'];
+      var btn = 0;
+      while (btn < arr.length) {
+        document.getElementById("btn-" + `${btn+1}`).addEventListener("click", function(fixedBtnIndex) {
+          return function() {
+            console.log(e);
+            alert(arr[fixedBtnIndex]);
+          }
+        }(btn))
+        btn++;
+      }
+
+    </script>
+  </body>
+</html>
