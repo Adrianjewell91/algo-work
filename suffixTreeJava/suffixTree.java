@@ -1,6 +1,12 @@
 import java.util.HashMap;
 import java.util.Map;
 
+// Refactor the code.
+
+// Improve the space complexity by switching to start and end instead of strings. 
+// Improve time complexity by using suffix links. 
+// Improve time complexity by extending all leaves at the same time. 
+
 class SuffixTree {
     public static class Node {
         String path;
@@ -12,11 +18,8 @@ class SuffixTree {
         }
     }
 
-    public static Node buildSuffixTree(Node root) {
-        // String string = "abxabcx$";
-        String string = "zxabcdezy$yzabcdezx#";
-        System.out.println(string);
-        
+    public static Node buildSuffixTree(Node root, String string) {
+        System.out.println("The String is: " + string);      
         String[] alphabet = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e",
                 "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
@@ -29,9 +32,6 @@ class SuffixTree {
 
         for (int i = 0; i < string.length(); i++) {
             for (int j = 0; j <= i; j++) {
-
-                System.out.println("substring: " + string.substring(j, i));
-
                 String substring = string.substring(j, i);
                 String nextChar = string.substring(i, i + 1);
 
@@ -59,26 +59,20 @@ class SuffixTree {
                         }
                     }
                 }
-// I'm not checking the scenario when the substring has reached the end of the 
-// The node's path, but one of the children continues the path. 
-                if (substring.length() == 0) {
-                    if (current.children[map.get(nextChar)] == null)
+
+                if (pos == current.path.length()) {
+                    if (hasNoChildren(current) && substring.length() != 0) {
+                        current.path += nextChar;
+                    } else if (current.children[map.get(nextChar)] == null) {
                         current.children[map.get(nextChar)] = new Node(nextChar);
-                } else if (pos == current.path.length() && hasNoChildren(current)) {
-                    current.path += nextChar;
-                } else if (pos == current.path.length() && current.children[map.get(nextChar)] == null) {
+                    }
+                } else if (!current.path.substring(pos, pos+1).equals(nextChar)) {
+                    String path = current.path;
+                    Node newNode = new Node(path.substring(pos, path.length()));
+                    
+                    current.path = path.substring(0, pos);
                     current.children[map.get(nextChar)] = new Node(nextChar);
-                } else if (pos != current.path.length() && !current.path.substring(pos, pos+1).equals(nextChar)) {
-                    current.children[map.get(nextChar)] = new Node(nextChar);
-
-                    Node newNode = new Node(current.path.substring(pos, current.path.length()));
-                    current.path = current.path.substring(0, pos);
                     current.children[map.get(newNode.path.substring(0,1))] = newNode;
-                }
-
-                for (int m = 0; m < root.children.length; m++) {
-                    if (root.children[m] != null)
-                        System.out.println(root.children[m].path);
                 }
             }
         }
@@ -95,6 +89,7 @@ class SuffixTree {
 
     public static void printSuffixes(Node node, String suffix) {
         int count = 0;
+        
         for (int i = 0; i < node.children.length; i++) {
             if (node.children[i] != null) {
                 printSuffixes(node.children[i], suffix + node.children[i].path);
@@ -106,8 +101,11 @@ class SuffixTree {
     }
     public static void main(String[] args) {
         Node root = new Node("");
-        buildSuffixTree(root);
-        // Test
+        //Tests:
+        buildSuffixTree(root, "abxabcx$");
+        printSuffixes(root, "");
+        root = new Node("");
+        buildSuffixTree(root, "zxabcdezy$yzabcdezx#");
         printSuffixes(root, "");
     }
 }
